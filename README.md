@@ -22,7 +22,3 @@ Usamos a versão 3.12 do **Python** na **AWS**, então é interessante garantir 
 
 > [!NOTE]
 > Lembre-se de ler as documentações no grupo do telegram.
-
-
-> [!WARNING]
-> Não se esqueça de realizar um ```git fetch & git pull``` sempre que for começar algo, assim não haverá conflito na hora do ```git push```.
