@@ -23,11 +23,14 @@ async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	month = datetime.datetime.now().month
 	msg = ""
 
-	if 1 < month <= 5:
+	if 4 <= month <= 5:
 		msg = "TOC TOC, É O PANCADASI BATENDO NA TUA PORTA!!! TEM QUE SER MALUCO PRA PERDER!!!"
 
-	if 5 < month <= 9:
+	elif 8 <= month <= 9:
 		msg = "EU OUVI MELHOR FESTA DO ANO? ISSO MESMO, VEM AÍ A GLOW CARALHO!"
+
+	else:
+		msg = "SEM PREVISÃO PRA NADA, VAMO TRABALHAAAAAAAAAAR DASI"
 
 	await update.message.reply_text(msg)
 
