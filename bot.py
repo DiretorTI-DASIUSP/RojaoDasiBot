@@ -19,9 +19,6 @@ async def acende(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	name = update.message.from_user.first_name
 	await update.message.reply_text(f"Olá, eu sou um bot! Como posso te ajudar, {name}?")
 
-async def teste(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-	await update.message.reply_text("Comando recebido com sucesso!")
-	
 async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	month = datetime.datetime.now().month
 	msg = ""
@@ -41,9 +38,8 @@ async def initialize_application():
 	
 	if application is None:
 		application = ApplicationBuilder().token(TOKEN).build()
-		application.add_handler(CommandHandler("start", acende))
+		application.add_handler(CommandHandler("acende", acende))
 		application.add_handler(CommandHandler("vemai", vemai))
-		application.add_handler(MessageHandler(filters.COMMAND, teste))
 		await application.initialize()
 
 async def handle_request(event):
