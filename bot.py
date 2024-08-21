@@ -16,9 +16,14 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 async def acende(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	# COLOCAR A RANDOMIZAÇÃO DE PRA PRA PRA
-	name = update.message.from_user.first_name
-	await update.message.reply_text(f"Olá, eu sou um bot! Como posso te ajudar, {name}?")
+	await update.message.reply_text("PRA PRA PRA  PRA POW POW")
+	await update.message.reply_text("pra")
+	await update.message.reply_text("pra pra")
+	await update.message.reply_text("pra pra pra")
+	await update.message.reply_text("pow")
+	await update.message.reply_text("pow pow")
 
+	
 async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	month = datetime.datetime.now().month
 	msg = ""
