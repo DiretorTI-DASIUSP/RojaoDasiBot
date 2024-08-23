@@ -14,8 +14,6 @@ from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 TOKEN = os.environ.get("TOKEN")
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #Init S3
@@ -24,14 +22,16 @@ s3 = boto3.client(
 	aws_access_key_id = AWS_ACCESS_KEY_ID,
 	aws_secret_access_key = AWS_SECRET_ACCESS_KEY
 )
-#s3 = boto3.client('s3') - IF LAMBDA CODE
+
+# s3 = boto3.client('s3') | IF IN LAMBDA FUNCTION
 
 BUCKET_NAME = "contagem-rojao"
 KEY = "contagem_rojao.json"
 
 def _getContagem() -> Dict:
-	response = s3.get_object(Bucket = BUCKET_NAME, Key = KEY) 
-	return json.load(response['Body'])
+	response = s3.get_object(Bucket=BUCKET_NAME, Key=KEY)
+	content = response['Body'].read().decode('utf-8')
+	return json.loads(content)
 
 def _putContagem() -> bool:
 	cont = _getContagem()
@@ -43,15 +43,18 @@ def _putContagem() -> bool:
 async def acende(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	# COLOCAR A RANDOMIZAÇÃO DE PRA PRA PRA
 
-	_putContagem()
-
-	await update.message.reply_text("PRA PRA PRA  PRA POW POW", quote = False)
-	await update.message.reply_text("pra", quote = False)
-	await update.message.reply_text("pra pra", quote = False)
-	await update.message.reply_text("pra pra pra", quote = False)
-	await update.message.reply_text("pow", quote = False)
-	await update.message.reply_text("pow pow", quote = False)
-
+	await asyncio.to_thread(_putContagem)
+	mensagem = ["PRA PRA PRA  PRA POW POW", # Randomizar aqui <------
+				"pra",
+				"pra pra",
+				"pra pra pra",
+				"pow",
+				"pow pow"]
+	
+	
+	for texto in mensagem:
+		await update.message.reply_text(texto, quote = False)
+	
 async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	month = datetime.datetime.now().month
 	msg = ""
@@ -68,8 +71,7 @@ async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	await update.message.reply_text(msg)
 
 async def contagem(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-	cont = _getContagem()
-	print(cont['contagem'])
+	cont = await asyncio.to_thread(_getContagem)
 	await update.message.reply_text(f"O DASI Já usou o Rojão DASIANO {cont['contagem']} vezes")
 
 
@@ -84,7 +86,7 @@ async def initialize_application():
 		application.add_handler(CommandHandler("vemai", vemai))
 		application.add_handler(CommandHandler("contagem", contagem))
 		await application.initialize()
-
+		await application.start()
 async def handle_request(event):
 	try:
 		logging.info("Processing request")
@@ -98,10 +100,18 @@ async def handle_request(event):
 		raise
         
 def lambda_handler(event, context) -> dict:
-	asyncio.run(initialize_application())
-	asyncio.run(handle_request(event))
+    # Inicializar nossa aplicação caso não tenha
+	loop = asyncio.get_event_loop()
+	if loop.is_closed():
+		loop = asyncio.new_event_loop()
+		asyncio.set_event_loop(loop)
 
+	loop.run_until_complete(initialize_application())
+	loop.run_until_complete(handle_request(event))
+
+    # Retornar uma mensagem de sucesso.
 	return {
-	'statusCode': 200,
-	'body': json.dumps('Request processed successfully!')
+		'statusCode': 200,
+		'body': json.dumps('Request processed successfully')
+		
 	}
