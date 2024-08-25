@@ -70,6 +70,27 @@ async def vemai(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 	await update.message.reply_text(msg)
 
+async def cagaram(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+	# Atualizar contagem aqui
+	# await asyncio.to_thread(_putContagem)
+	
+	# Pode habilitar só quando for época de inter
+	# Ou deixar sempre funcionando
+	mensagem = ""
+	
+	# Se for pra deixar só quando for inter
+	month = datetime.datetime.now().month
+	if 4 <= month <= 5:
+		mensagem = ["Pode fumar",
+			"Pode beber",
+			"Só não pode CAGAR NA PIAAAA"]
+	else:
+		mensagem = ["Cagar?",
+			"COMO ASSIM??"]
+
+	for texto in mensagem:
+		await update.message.reply_text(texto, quote = False)
+
 async def contagem(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	cont = await asyncio.to_thread(_getContagem)
 	await update.message.reply_text(f"O DASI Já usou o Rojão DASIANO {cont['contagem']} vezes")
@@ -85,6 +106,7 @@ async def initialize_application():
 		application.add_handler(CommandHandler("acende", acende))
 		application.add_handler(CommandHandler("vemai", vemai))
 		application.add_handler(CommandHandler("contagem", contagem))
+		application.add_handler(CommandHandler("cagaram", cagaram))
 		await application.initialize()
 		await application.start()
 async def handle_request(event):
